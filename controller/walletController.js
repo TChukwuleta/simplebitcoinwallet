@@ -2,6 +2,11 @@ const { errorResponse, successResponse } = require("../helpers/responseHelper")
 const bip39 = require("bip39")
 const bitcoin = require("bitcoinjs-lib")
 const bip32 = require("bip32")
+const { 
+    generateChangeAddresses, 
+    generateAddressBatch,
+    getUtxoFromAddresses
+} = require("../helpers/bitcoinutil")
 
 // Bitcoin network
 const network = bitcoin.networks.testnet;
@@ -97,6 +102,28 @@ const generatep2wpkhAddress = async (req, res, next) => {
             network
         }).address;
         successResponse(res, 200, "P2WSH address generation was successful", p2wpkhAddress);
+    } catch (error) {
+        const message = error.message || error;
+        const code = error.code || 400;
+        errorResponse(res, code, message);
+    }
+}
+
+const createTransaction = async (req, res, next) => {
+    try {
+        const publicKey = req.body.publickey;
+        const recipientAddress = req.body.recipient;
+        const amount = req.body.amount;
+        const addresstype = req.body.type;
+        const privatekey = req.body.privatekey;
+        const root = bip32.fromBase58(privatekey, network);
+
+        const currentAddressBatch = generateAddressBatch(publicKey, root, addresstype);
+        const currentChangeAddressBatch = generateChangeAddresses(publicKey, root, addresstype);
+        const addresses = [...currentAddressBatch, ...currentChangeAddressBatch];
+        const utxos = await getUtxoFromAddresses(addresses, root);
+        
+
     } catch (error) {
         const message = error.message || error;
         const code = error.code || 400;
