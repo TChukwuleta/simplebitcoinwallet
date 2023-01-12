@@ -1,13 +1,8 @@
-const express = require('express')
-const app = express()
-const bitRoutes = require('./routes/authRoutes')
+const app = require('./app')
 
-app.use(express.urlencoded({ extended : false }))
-app.use(express.json())
+const port = process.env.PORT || 9003
 
-app.use('/api', bitRoutes)
 
-const port = 3004
 app.listen(port, () => {
-    console.log(`App is listening on port ${port}`)
+    console.log(`Speak Lord, your application is listening on port: ${port}`)
 })

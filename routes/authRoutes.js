@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const bitUtils = require('../Helper/bitcoinutils')
+const bitUtils = require('../helpers/bitcoinutils')
 
 router.post("/test", bitUtils.getAddress)
 
