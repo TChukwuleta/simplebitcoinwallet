@@ -40,7 +40,7 @@ const generateMasterKeys = async (req, res, next) => {
         const code = error.code || 400;
         errorResponse(res, code, message);
     }
-} 
+}  
 
 const generatep2shp2wpkhAddress = async (req, res, next) => {
     try {
@@ -122,7 +122,7 @@ const createTransaction = async (req, res, next) => {
         const currentChangeAddressBatch = generateChangeAddresses(publicKey, root, addresstype);
         const addresses = [...currentAddressBatch, ...currentChangeAddressBatch];
         const utxos = await getUtxoFromAddresses(addresses, root);
-        
+
 
     } catch (error) {
         const message = error.message || error;
@@ -138,5 +138,6 @@ module.exports = {
     generatep2pkhAddress,
     generatep2shAddress,
     generatep2wpkhAddress,
-    generatep2shp2wpkhAddress
+    generatep2shp2wpkhAddress,
+    createTransaction
 }

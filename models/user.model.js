@@ -19,6 +19,10 @@ const userSchema = new schema({
         required: true,
         trim: true
     },
+    password: {
+        type: String,
+        required: true
+    },
     phonenumber: {
         type: String,
         trim: true

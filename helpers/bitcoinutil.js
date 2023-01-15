@@ -1,5 +1,6 @@
 const axios = require("axios");
 const dotenv = require("dotenv");
+const bitcoin = require("bitcoinjs-lib");
 dotenv.config();
 
 // Bitcoin network
@@ -12,7 +13,7 @@ const baseUrl = process.env.BASE_URL;
 // Generate 10 change addresses for user
 const generateChangeAddresses = (pubkey, root, addressType = null) => {
     const addressBatch = [];
-    let currentAddress;
+    let currentAddress; 
     for (let i = 0; i < 10; i++) {
         const newPath = `${path}'1/${i}`;
         const currentChildPubkey = deriveChildPublicKey(pubkey, newPath);

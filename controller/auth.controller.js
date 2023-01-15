@@ -2,20 +2,30 @@ const ApiError = require("../helpers/ApiError");
 const catchAsync = require("../helpers/catchAsync");
 const pick = require("../helpers/pick");
 const { User, Token } = require("../models");
-const { tokenService, authService } = require("../services");
+const encryptMethod = require("../helpers/encryption");
+const { tokenService, authService, bitcoinService } = require("../services");
 require('dotenv').config();
 
 const register = catchAsync(async (req, res) => {
-    const token = Math.floor(1000 + Math.random() * 9000)
+    console.log(req.body);
+    const token = Math.floor(1000 + Math.random() * 9000);
+    console.log(`Token is: ${token}`);
+    const mnemonic = await bitcoinService.generateMnemonic();
+    const keys = await bitcoinService.generateMasterKeys(mnemonic);
+    console.log(keys);
+    const encryptedPrivateKey = encryptMethod.encryptKey(keys.xprv);
+    const encryptedPublicKey = encryptMethod.encryptKey(keys.xpub);
     var userRequest = {
         ...req.body,
         pin: token.toString(),
+        privatekey: encryptedPrivateKey,
+        publickey: encryptedPublicKey,
         availableBalance: 0
     }
     const user = await authService.register(userRequest);
     const tokens = await tokenService.generateAuthTokens(user, true);
     res.status(201).send({
-        message: "Youngster registration was successful",
+        message: "User registration was successful",
         data: {
             user,
             token: tokens.access.token
